@@ -11,7 +11,7 @@ export type TShape = {
     position: [number, number, number]
 }
 
-const CanvasElem = () => {
+const Canvas = () => {
     const [shapes, setShapes] = useState<TShape[]>([])
     const [nextId, setNextId] = useState(1)
 
@@ -68,4 +68,4 @@ const CanvasElem = () => {
     )
 }
 
-export default CanvasElem
+export default Canvas
