@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/canvas-three/static/css/main.194ead4b.css",
+    "main.js": "/canvas-three/static/js/main.25281346.js",
+    "index.html": "/canvas-three/index.html",
+    "main.194ead4b.css.map": "/canvas-three/static/css/main.194ead4b.css.map",
+    "main.25281346.js.map": "/canvas-three/static/js/main.25281346.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.194ead4b.css",
+    "static/js/main.25281346.js"
+  ]
+}
