@@ -1,44 +1,41 @@
-import React, { useRef, useState, useEffect } from 'react'
+import React from 'react'
 import * as THREE from 'three'
-import { Canvas, useFrame, extend, useThree } from '@react-three/fiber'
-import { Text } from '@react-three/drei'
+import {getExitPoint} from "./helper";
 
-type TShape = {
-    id: number
-    name: string
-    position: [number, number, number]
+type TArrow = {
+    from: [number, number, number]
+    to: [number, number, number]
     color: string
 }
-const Rectangle = (props: any) => {
-    const {shape} = props
-    const meshRef = useRef<THREE.Mesh>(null)
+const Arrow = (props: TArrow) => {
+    const {from, to, color} = props
 
-    // useFrame(() => {
-    //     if (meshRef.current) {
-    //         meshRef.current.rotation.y += 0.01
-    //     }
-    // })
+    const boxSize = new THREE.Vector3(3, 1, 0.2)
+
+    const direction = new THREE.Vector3().subVectors(
+        new THREE.Vector3(...from),
+        new THREE.Vector3(...to)
+    ).normalize()
+
+    const startPoint = getExitPoint(new THREE.Vector3(...from), direction.clone().negate(), boxSize)
+    const endPoint = getExitPoint(new THREE.Vector3(...to), direction.clone(), boxSize)
+
+    const arrowDirection = new THREE.Vector3().subVectors(startPoint, endPoint)
+    const arrowLength = arrowDirection.length()
+    const arrowDirectionNormalized = arrowDirection.normalize()
 
     return (
-        <group position={shape.position}>
-            {/* Прямоугольник (3D коробка) */}
-            <mesh ref={meshRef}>
-                <boxGeometry args={[3, 2, 0.2]} /> {/* Ширина, высота, глубина */}
-                <meshStandardMaterial color={shape.color} />
-            </mesh>
-
-            {/* Текст на прямоугольнике */}
-            <Text
-                position={[0, 0, 0.11]} // Немного перед прямоугольником
-                color="white"
-                fontSize={0.5}
-                anchorX="center"
-                anchorY="middle"
-            >
-                {shape.name}
-            </Text>
-        </group>
+        <arrowHelper
+            args={[
+                arrowDirectionNormalized,
+                endPoint,
+                arrowLength,
+                color,
+                0.2,
+                0.3
+            ]}
+        />
     )
 }
 
-export default Rectangle
+export default Arrow

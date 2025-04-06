@@ -1,5 +1,6 @@
 import React, {useState} from 'react'
-import {Canvas} from '@react-three/fiber'
+import css from './Canvas.module.scss'
+import {Canvas as CanvasThree} from '@react-three/fiber'
 import Rectangle from "../Shapes/Rectangle"
 import Arrow from "../Shapes/Arrow"
 import Navigation from "../Navigation"
@@ -8,7 +9,6 @@ export type TShape = {
     id: number
     name: string
     position: [number, number, number]
-    color: string
 }
 
 const CanvasElem = () => {
@@ -16,49 +16,43 @@ const CanvasElem = () => {
     const [nextId, setNextId] = useState(1)
 
     const [activeShapeId, setActiveShapeId] = useState<number | null>(null)
-    //TODO подумать насчет shape, точно ли фигуры а не rectangle (прямоугольник)
+
     const handleSetActiveShapeId = (id: number) => {
         setActiveShapeId(id)
     }
 
-    // Функция добавления новой фигуры
     const handleAddShape = () => {
         const newShape: TShape = {
             id: nextId,
             name: `Shape${nextId}`,
-            position: [
-                Math.random() * 10 - 5, // X: от -5 до 5
-                Math.random() * 10 - 5, // Y: от -5 до 5
-                0                        // Z: 0 (плоскость)
-            ],
-            color: `#${Math.floor(Math.random() * 16777215).toString(16)}` // Случайный цвет
+            position: [Math.random() * 10 - 5, Math.random() * 10 - 5, 0],
         }
         setShapes([...shapes, newShape])
         setNextId(nextId + 1)
     }
 
-    // Функция удаления последней фигуры
     const handleDeleteShape = () => {
         if (activeShapeId) {
             const newShapes = shapes.filter(x => x.id !== activeShapeId)
             setShapes(newShapes)
-            setNextId(nextId > 1 ? nextId - 1 : 1) // todo нужно ли это
+
+            const lastId = nextId > 1 ? (newShapes[newShapes.length - 1]?.id || 0) + 1 : 1
+            setNextId(lastId)
+
             setActiveShapeId(null)
         }
     }
 
     return (
-        <div style={{ width: '100vw', height: '100vh', display: 'flex', flexDirection: 'column' }}>
+        <div className={css.canvas}>
             <Navigation {...{handleAddShape, handleDeleteShape, disabledDelete: !activeShapeId}}/>
-
-            {/* 3D холст */}
-            <div style={{ flex: 1 }}>
-                <Canvas camera={{ position: [0, 0, 15], fov: 50 }}>
+            <div className={css.containerCanvasThree}>
+                <CanvasThree camera={{ position: [0, 0, 15], fov: 50 }}>
                     <ambientLight intensity={0.5} />
                     <pointLight position={[10, 10, 10]} />
                     {shapes.map((shape, index) => (
-                        <>
-                            <Rectangle key={shape?.id} {...{shape, activeShapeId, handleSetActiveShapeId}} />
+                        <React.Fragment key={shape.id}>
+                            <Rectangle {...{shape, activeShapeId, handleSetActiveShapeId}} />
                             {index < shapes.length - 1 && (
                                 <Arrow
                                     from={shape.position}
@@ -66,10 +60,9 @@ const CanvasElem = () => {
                                     color="black"
                                 />
                             )}
-                        </>
-
+                        </React.Fragment>
                     ))}
-                </Canvas>
+                </CanvasThree>
             </div>
         </div>
     )

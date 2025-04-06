@@ -1,15 +1,21 @@
 import React from 'react';
+import css from './Navigation.module.scss'
 
-const NavBar = (props: any) => {
-    const {shapes, addShape, deleteShape} = props
+interface INavigation {
+    handleAddShape: () => void
+    handleDeleteShape: () => void
+    disabledDelete: boolean
+}
+
+const Navigation = (props: INavigation) => {
+    const {handleAddShape, handleDeleteShape, disabledDelete} = props
 
     return (
-        <div style={{ padding: '10px', backgroundColor: '#fff' }}>
-            <button onClick={addShape} style={{ marginRight: '10px' }}>Add</button>
-            <button onClick={deleteShape}>Delete</button>
-            <span style={{ marginLeft: '20px' }}>Фигур: {shapes.length}</span>
+        <div className={css.navigation}>
+            <button className={css.navigationButtonAdd} onClick={handleAddShape}>Add</button>
+            <button onClick={handleDeleteShape} disabled={disabledDelete}>Delete</button>
         </div>
     )
 }
 
-export default NavBar
+export default Navigation
